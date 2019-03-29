@@ -39,7 +39,6 @@ class Mobi:
         images = []
         # need lz77
         compression = self.palmDocHeader['compression']
-        print(compression)
         for i in range(self.mobiHeader['firstRecord'], self.mobiHeader['nobookIndex']) :
             data = (self.contents[self.pdfRecord[i]['recordDataOffset']:self.pdfRecord[i+1]['recordDataOffset']])
             if compression == 2:

@@ -38,7 +38,6 @@ def uncompress(data):
 
       offset += 1;
       if (offset > len(data)):
-        print("WARNING: offset to LZ77 bits is outside of the data: %d" % offset);
         return text;
 
       lz77, = struct.unpack('>H', data[offset-2:offset])
@@ -52,7 +51,6 @@ def uncompress(data):
       # Remaining 11 bits are offset
       lz77offset = lz77 >> 3;
       if (lz77offset < 1):
-        print("WARNING: LZ77 decompression offset is invalid!");
         return text;
 
       # Getting text from the offset is a little tricky, because
@@ -63,8 +61,6 @@ def uncompress(data):
       for lz77pos in range(lz77length): # for($lz77pos = 0; $lz77pos < $lz77length; $lz77pos++)
         textpos = textlength - lz77offset;
         if (textpos < 0):
-          print("WARNING: LZ77 decompression reference is before"+
-                " beginning of text! %x" % lz77);
           return;
 
         text += text[textpos:textpos+1]; #text .= substr($text,$textpos,1);
