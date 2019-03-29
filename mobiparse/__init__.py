@@ -1,6 +1,7 @@
 # encoding: utf-8
 from struct import *
 from .utils import *
+from .lz77 import uncompress
 
 # Mobi parse
 # refer : https://wiki.mobileread.com/wiki/MOBI
@@ -36,10 +37,19 @@ class Mobi:
     def parse(self):
         htmldata = ''
         images = []
+        # need lz77
+        compression = self.palmDocHeader['compression']
+        print(compression)
         for i in range(self.mobiHeader['firstRecord'], self.mobiHeader['nobookIndex']) :
-            htmldata = htmldata + (self.contents[self.pdfRecord[i]['recordDataOffset']:self.pdfRecord[i+1]['recordDataOffset']])
+            data = (self.contents[self.pdfRecord[i]['recordDataOffset']:self.pdfRecord[i+1]['recordDataOffset']])
+            if compression == 2:
+                data = uncompress(data)
+            htmldata = htmldata + data
         for i in range(self.mobiHeader['firstImageIndex'], self.mobiHeader['lastRecord']) :
-            images.append(self.contents[self.pdfRecord[i]['recordDataOffset']:self.pdfRecord[i+1]['recordDataOffset']])
+            data = (self.contents[self.pdfRecord[i]['recordDataOffset']:self.pdfRecord[i+1]['recordDataOffset']])
+            if compression == 2:
+                data = uncompress(data)
+            images.append(data)
         return htmldata, images
 
 
