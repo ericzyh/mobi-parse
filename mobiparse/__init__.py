@@ -40,7 +40,7 @@ class Mobi:
         # need lz77
         compression = self.palmDocHeader['compression']
         for i in range(self.mobiHeader['firstRecord'], self.mobiHeader['nobookIndex']) :
-            data = (self.contents[self.pdfRecord[i]['recordDataOffset']:self.pdfRecord[i+1]['recordDataOffset']])
+            data = (self.contents[self.pdfRecord[i]['recordDataOffset']:self.pdfRecord[i+1]['recordDataOffset'] - self.mobiHeader['extraBytes']])
             if compression == 2:
                 data = uncompress(data)
             htmldata = htmldata + data
@@ -104,6 +104,10 @@ class Mobi:
         results = toDict(zip(fields, unpack(headerfmt, self.contents[self.offset:self.offset+headerlen])))
         self.offset += results['headerLength'];
         results['fullName'] = self.contents[self.pdfRecord[0]['recordDataOffset']+results['fullNameOffset']:self.pdfRecord[0]['recordDataOffset']+results['fullNameOffset']+results['fullNameLength']]
+        def onebits(x, width=16):
+            return len(filter(lambda x: x == "1", (str((x>>i)&1) for i in xrange(width-1,-1,-1))));
+        results['extraBytes'] = 2*onebits(unpack(">H", self.contents[self.offset-2:self.offset])[0] & 0xFFFE)
+
         return results;
 
     def parseExthHeader(self):

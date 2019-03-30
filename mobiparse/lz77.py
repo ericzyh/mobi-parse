@@ -6,12 +6,9 @@ def uncompress(data):
   text = '';   # Output (uncompressed) text
 
   while offset < length:
-    # char = substr($data,$offset++,1);
     char = data[offset];
     offset += 1;
     ord_ = ord(char);
-
-    # print " ".join([repr(char), hex(ord_)])
 
     # The long if-elsif chain is the best logic for $ord handling
     ## no critic (Cascading if-elsif chain)
